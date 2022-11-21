@@ -4,6 +4,8 @@ name: Update images
 on:
   workflow_dispatch:
   push:
+  schedule:
+    - cron: "0 0 * * *" # Every day
 
 jobs:
   update_package:
@@ -39,15 +41,21 @@ jobs:
       - name: Print latest version
         run: echo ${{ steps.last_version.outputs.version }} | sed 's/^v\(.*\)/\1/'
 
-      # TODO: check if tag already exists
-
-      - name: Build and publish a Docker image for ${{ github.repository }}
-        uses: macbre/push-to-ghcr@master
+      - name: Check if image is already built
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
-        with:
-          image_name: ${{ github.repository_owner }}/${{ matrix.image.name }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: "${{ matrix.image.name }}/Dockerfile"
-          image_tag: "${{ env.TAG }}"
-          context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}/Dockerfile"
+        run: |
+          docker manifest inspect ${{ github.repository_owner }}/${{ matrix.image.name }}:$TAG
+
+      # TODO: check if tag already exists
+
+      # - name: Build and publish a Docker image for ${{ github.repository }}
+      #   uses: macbre/push-to-ghcr@master
+      #   env:
+      #     TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
+      #   with:
+      #     image_name: ${{ github.repository_owner }}/${{ matrix.image.name }}
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     dockerfile: "${{ matrix.image.name }}/Dockerfile"
+      #     image_tag: "${{ env.TAG }}"
+      #     context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}/Dockerfile"
