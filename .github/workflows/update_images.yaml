@@ -37,7 +37,7 @@ jobs:
       - name: Build and publish a Docker image for ${{ github.repository }}
         uses: macbre/push-to-ghcr@master
         env:
-          TAG: "${{ steps.last_release.outputs.release }}-${{ martix.image.suffix }}"
+          TAG: "${{ steps.last_release.outputs.release }}-${{ matrix.image.suffix }}"
         with:
           image_name: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
