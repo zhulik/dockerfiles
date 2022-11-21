@@ -46,7 +46,7 @@ jobs:
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
         with:
-          image_name: ${{ github.repository }}
+          image_name: ${{ github.repository_owner }}/${{ matrix.image.name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: "${{ matrix.image.name }}/Dockerfile"
           image_tag: "${{ env.TAG }}"
