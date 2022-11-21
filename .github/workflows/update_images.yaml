@@ -14,6 +14,7 @@ jobs:
         image:
           - name: telegraf
             repo: influxdata/telegraf
+            suffix: "alpine"
 
     steps:
       - name: Check out
@@ -22,11 +23,24 @@ jobs:
       - name: Authenticate at ghcr.io
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
 
-      - name: Get lates release for {{ matrix.image.telegraf }}
+      - name: Get lates release for ${{ matrix.image.telegraf }}
         id: last_release
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: ${{ matrix.image.repo }}
 
-      - name: Echo
+      - name: Print astest version
         run: echo ${{ steps.last_release.outputs.release }}
+
+      # TODO: check if tag already exists
+
+      - name: Build and publish a Docker image for ${{ github.repository }}
+        uses: macbre/push-to-ghcr@master
+        env:
+          TAG: "${{ steps.last_release.outputs.release }}-${{ martix.image.suffix }}"
+        with:
+          image_name: ${{ github.repository }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: "${{ matrix.image.name }}/Dockerfile"
+          image_tag: "${{ env.TAG }}"
+          context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}/Dockerfile"
