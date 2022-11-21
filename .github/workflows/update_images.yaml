@@ -34,7 +34,7 @@ jobs:
 
       - name: Save latest version
         id: last_version
-        run: echo "version=${{ steps.last_release.outputs.release }}" | sed 's/^v\(.*\)/\1/' >> $GITHUB_OUTPUT
+        run: echo "version=$(echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/')" >> $GITHUB_OUTPUT
 
       - name: Print latest version
         run: echo ${{ steps.last_version.outputs.version }} | sed 's/^v\(.*\)/\1/'
