@@ -37,14 +37,14 @@ jobs:
         run: echo "version=${{ steps.last_release.outputs.release }}" | sed 's/^v\(.*\)/\1/' >> $GITHUB_OUTPUT
 
       - name: Print latest version
-        run: echo ${{ steps.last_versione.outputs.verison }} | sed 's/^v\(.*\)/\1/'
+        run: echo ${{ steps.last_version.outputs.verison }} | sed 's/^v\(.*\)/\1/'
 
       # TODO: check if tag already exists
 
       - name: Build and publish a Docker image for ${{ github.repository }}
         uses: macbre/push-to-ghcr@master
         env:
-          TAG: "${{ steps.last_versione.outputs.verison }}-${{ matrix.image.suffix }}"
+          TAG: "${{ steps.last_version.outputs.verison }}-${{ matrix.image.suffix }}"
         with:
           image_name: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
