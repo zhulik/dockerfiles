@@ -1,0 +1,32 @@
+---
+name: Update images
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  update_package:
+    name: Update package
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - name: telegraf
+            repo: influxdata/telegraf
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v3
+
+      - name: Authenticate at ghcr.io
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
+
+      - name: Get lates release for {{ matrix.image.telegraf }}
+        id: last_release
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ matrix.image.repo }}
+
+      - name: Echo
+        run: echo ${{ steps.last_release.outputs.release }}
