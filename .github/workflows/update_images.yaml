@@ -22,24 +22,22 @@ jobs:
       - name: Check out
         uses: actions/checkout@v3
 
-      - name: Authenticate at ghcr.io
-        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u USERNAME --password-stdin
-
       - name: Get lates release for ${{ matrix.image.telegraf }}
         id: last_release
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: ${{ matrix.image.repo }}
 
-      - name: Print latest release
+      - name: Calculate latest version
         run: echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/'
 
       - name: Save latest version
         id: last_version
-        run: echo "version=$(echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/')" >> $GITHUB_OUTPUT
-
-      - name: Print latest version
-        run: echo ${{ steps.last_version.outputs.version }} | sed 's/^v\(.*\)/\1/'
+        run: |
+          echo "Latest release: ${{ steps.last_release.outputs.release }}"
+          version=$(echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/') # Remove v from vX.Y.Z
+          echo "Version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Check if image is already built
         env:
