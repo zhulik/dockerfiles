@@ -45,7 +45,7 @@ jobs:
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
         run: |
-          docker manifest inspect ${{ github.repository_owner }}/${{ matrix.image.name }}:$TAG
+          docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}
 
       # TODO: check if tag already exists
 
