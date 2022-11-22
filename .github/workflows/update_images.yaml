@@ -46,11 +46,11 @@ jobs:
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
         run: |
+          set +e
           docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}x
           echo "code=$?" >> $GITHUB_OUTPUT
 
-      - name: Build and publish to ghcr.io
-        if: ${{ steps.exists.outputs.code != 0 }}
+      - if: ${{ steps.exists.outputs.code != 0 }}
         uses: macbre/push-to-ghcr@master
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
