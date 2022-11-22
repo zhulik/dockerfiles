@@ -47,7 +47,7 @@ jobs:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
         run: |
           set +e
-          docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}x
+          docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}
           echo "code=$?" >> $GITHUB_OUTPUT
 
       - if: ${{ steps.exists.outputs.code != 0 }}
