@@ -28,7 +28,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v3
 
-      - name: Get lates release for ${{ matrix.image.telegraf }}
+      - name: Get latest release for ${{ matrix.image.telegraf }}
         id: last_release
         if: "${{ matrix.strategy == 'check-upstream' }}"
         uses: pozetroninc/github-action-get-latest-release@master
@@ -56,7 +56,7 @@ jobs:
           echo "code=$?" >> $GITHUB_OUTPUT
 
       - name: Build and publish to ghcr.io
-        if: ${{ steps.exists.outputs.code != 0 || matrix.strategy == 'always' }}
+        if: ${{ steps.exists.outputs.code != 0 or matrix.strategy == 'always' }}
         uses: macbre/push-to-ghcr@master
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
