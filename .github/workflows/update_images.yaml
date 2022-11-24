@@ -65,4 +65,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: "${{ matrix.image.name }}/Dockerfile"
           image_tag: "${{ env.TAG }}"
-          context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}/Dockerfile"
+          context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}"
