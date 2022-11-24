@@ -16,11 +16,11 @@ jobs:
         image:
           - name: telegraf
             repo: influxdata/telegraf
-            suffix: "alpine"
+            suffix: "-alpine"
             strategy: "check-upstream"
 
           - name: backup
-            suffix: "alpine"
+            version: "latest"
             strategy: "always"
 
 
@@ -49,7 +49,7 @@ jobs:
         if: "${{ matrix.image.strategy == 'check-upstream' }}"
         continue-on-error: true # We need to handle exit status
         env:
-          TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
+          TAG: "${{ steps.last_version.outputs.version }}${{ matrix.image.suffix }}"
         run: |
           set +e
           docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}
@@ -59,7 +59,7 @@ jobs:
         if: ${{ matrix.image.strategy == 'always' || steps.exists.outputs.code != 0 }}
         uses: macbre/push-to-ghcr@master
         env:
-          TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
+          TAG: "${{ matrix.image.strategy == 'always' ? matrix.image.version : steps.last_version.outputs.version }}${{ matrix.image.suffix }}"
         with:
           image_name: ${{ github.repository_owner }}/${{ matrix.image.name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
