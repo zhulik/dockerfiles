@@ -17,6 +17,11 @@ jobs:
           - name: telegraf
             repo: influxdata/telegraf
             suffix: "alpine"
+            strategy: "check-upstream"
+
+          - name: backup
+            suffix: "alpine"
+            strategy: "always"
 
 
     steps:
@@ -25,12 +30,14 @@ jobs:
 
       - name: Get lates release for ${{ matrix.image.telegraf }}
         id: last_release
+        if: "${{ matrix.strategy == 'check-upstream' }}"
         uses: pozetroninc/github-action-get-latest-release@master
         with:
           repository: ${{ matrix.image.repo }}
 
       - name: Save latest version
         id: last_version
+        if: "${{ matrix.strategy == 'check-upstream' }}"
         run: |
           echo "Latest release: ${{ steps.last_release.outputs.release }}"
           version=$(echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/') # Remove v from vX.Y.Z
@@ -39,6 +46,7 @@ jobs:
 
       - name: Check if image is already built
         id: exists
+        if: "${{ matrix.strategy == 'check-upstream' }}"
         continue-on-error: true # We need to handle exit status
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
@@ -48,7 +56,7 @@ jobs:
           echo "code=$?" >> $GITHUB_OUTPUT
 
       - name: Build and publish to ghcr.io
-        if: ${{ steps.exists.outputs.code != 0 }}
+        if: ${{ steps.exists.outputs.code != 0 || matrix.strategy == 'always' }}
         uses: macbre/push-to-ghcr@master
         env:
           TAG: "${{ steps.last_version.outputs.version }}-${{ matrix.image.suffix }}"
