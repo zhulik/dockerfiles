@@ -17,7 +17,7 @@ RUN apk add --no-cache alpine-sdk &&\
 
 FROM base
 
-RUN apk add --no-cache postgresql15-client
+RUN apk add --no-cache postgresql15-client restic
 
 COPY --from=builder /workdir/Gemfile.lock .
 COPY --from=builder /workdir/vendor/ ./vendor/
