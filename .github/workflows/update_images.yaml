@@ -16,8 +16,8 @@ jobs:
         image:
           - name: telegraf
             repo: influxdata/telegraf
-            suffix: "-alpine"
-            strategy: "check-upstream"
+            version: "latest"
+            strategy: "always"
 
           - name: backup
             version: "latest"
