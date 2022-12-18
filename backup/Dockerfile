@@ -17,12 +17,13 @@ RUN apk add --no-cache alpine-sdk &&\
 
 FROM base
 
-RUN apk add --no-cache postgresql15-client restic
+RUN apk add --no-cache postgresql15-client restic libcap
 ENV ECTD_VERSION v3.5.6
 
 RUN wget -qO- https://github.com/etcd-io/etcd/releases/download/${ECTD_VERSION}/etcd-${ECTD_VERSION}-linux-amd64.tar.gz | tar -xvz &&\
     mv etcd-${ECTD_VERSION}-linux-amd64/etcdctl /bin &&\
-    rm -rf etcd-${ECTD_VERSION}-linux-amd64
+    rm -rf etcd-${ECTD_VERSION}-linux-amd64 &&\
+    setcap cap_dac_read_search=+ep /bin/etcdctl
 
 COPY --from=builder /workdir/Gemfile.lock .
 COPY --from=builder /workdir/vendor/ ./vendor/
