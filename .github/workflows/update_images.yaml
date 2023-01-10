@@ -27,6 +27,10 @@ jobs:
             version: "latest"
             strategy: "always"
 
+          - name: tools
+            version: "latest"
+            strategy: "always"
+
     steps:
       - name: Check out
         uses: actions/checkout@v3
