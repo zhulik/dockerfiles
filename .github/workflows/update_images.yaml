@@ -8,8 +8,8 @@ on:
     - cron: "0 0 * * *" # Every day
 
 jobs:
-  update_package:
-    name: Update package
+  update_image:
+    name: Update image
     runs-on: ubuntu-latest
     strategy:
       matrix:
