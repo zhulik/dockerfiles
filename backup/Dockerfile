@@ -18,11 +18,14 @@ RUN apk add --no-cache alpine-sdk &&\
 FROM base
 
 RUN apk add --no-cache postgresql15-client restic
-ENV ECTD_VERSION v3.5.6
+ENV ETCD_VERSION v3.5.6
 
-RUN wget -qO- https://github.com/etcd-io/etcd/releases/download/${ECTD_VERSION}/etcd-${ECTD_VERSION}-linux-amd64.tar.gz | tar -xvz &&\
-    mv etcd-${ECTD_VERSION}-linux-amd64/etcdctl /bin &&\
-    rm -rf etcd-${ECTD_VERSION}-linux-amd64
+RUN wget -qO- https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-amd64.tar.gz | tar -xvz &&\
+    mv etcd-${ETCD_VERSION}-linux-amd64/etcdctl /bin &&\
+    rm -rf etcd-${ETCD_VERSION}-linux-amd64
+
+RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -qO /bin/mcli &&\
+    chmod +x /bin/mcli
 
 COPY --from=builder /workdir/Gemfile.lock .
 COPY --from=builder /workdir/vendor/ ./vendor/
