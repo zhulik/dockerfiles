@@ -30,4 +30,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: "${{ matrix.image.name }}/Dockerfile"
           image_tag: "latest"
-          context: "--build-arg ${{ matrix.image.name }}"
+          context: "${{ matrix.image.name }}"
