@@ -15,61 +15,19 @@ jobs:
       matrix:
         image:
           - name: telegraf
-            repo: influxdata/telegraf
-            version: "latest"
-            strategy: "always"
-
           - name: backup
-            version: "latest"
-            strategy: "always"
-
           - name: preview-maker
-            version: "latest"
-            strategy: "always"
-
           - name: tools
-            version: "latest"
-            strategy: "always"
 
     steps:
       - name: Check out
         uses: actions/checkout@v3
 
-      - name: Get latest release for ${{ matrix.image.telegraf }}
-        id: last_release
-        if: "${{ matrix.image.strategy == 'check-upstream' }}"
-        uses: pozetroninc/github-action-get-latest-release@master
-        with:
-          repository: ${{ matrix.image.repo }}
-
-      - name: Save latest version
-        id: last_version
-        if: "${{ matrix.image.strategy == 'check-upstream' }}"
-        run: |
-          echo "Latest release: ${{ steps.last_release.outputs.release }}"
-          version=$(echo ${{ steps.last_release.outputs.release }} | sed 's/^v\(.*\)/\1/') # Remove v from vX.Y.Z
-          echo "Version: $version"
-          echo "version=$version" >> $GITHUB_OUTPUT
-
-      - name: Check if image is already built
-        id: exists
-        if: "${{ matrix.image.strategy == 'check-upstream' }}"
-        continue-on-error: true # We need to handle exit status
-        env:
-          TAG: "${{ steps.last_version.outputs.version }}${{ matrix.image.suffix }}"
-        run: |
-          set +e
-          docker manifest inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ env.TAG }}
-          echo "code=$?" >> $GITHUB_OUTPUT
-
       - name: Build and publish to ghcr.io
-        if: ${{ matrix.image.strategy == 'always' || steps.exists.outputs.code != 0 }}
         uses: macbre/push-to-ghcr@master
-        env:
-          TAG: "${{ (matrix.image.strategy == 'always' && matrix.image.version) || steps.last_version.outputs.version }}${{ matrix.image.suffix }}"
         with:
           image_name: ${{ github.repository_owner }}/${{ matrix.image.name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           dockerfile: "${{ matrix.image.name }}/Dockerfile"
-          image_tag: "${{ env.TAG }}"
-          context: "--build-arg VERSION=${{ env.TAG }} ${{ matrix.image.name }}"
+          image_tag: "latest"
+          context: "--build-arg ${{ matrix.image.name }}"
