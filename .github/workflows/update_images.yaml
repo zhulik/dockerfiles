@@ -18,6 +18,7 @@ jobs:
           - name: backup
           - name: preview-maker
           - name: tools
+          - name: s3proxy
 
     steps:
       - name: Check out
