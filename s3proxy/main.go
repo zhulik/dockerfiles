@@ -60,6 +60,7 @@ func main() {
 	bucket := getEnv("BUCKET")
 	endpoint := getEnv("ENDPOINT")
 	forcePathStype := getEnv("FORCE_PATH_STYLE") != ""
+	disableHTTPS := getEnv("DISABLE_HTTPS", "0") != "0"
 
 	cfg := lo.Must(config.LoadDefaultConfig(context.Background()))
 
@@ -71,6 +72,7 @@ func main() {
 		Bucket: bucket,
 		S3Client: s3.NewFromConfig(cfg, func(o *s3.Options) {
 			o.UsePathStyle = forcePathStype
+			o.EndpointOptions.DisableHTTPS = disableHTTPS
 		}),
 	}
 	http.HandleFunc("/*", proxy.Handle)
