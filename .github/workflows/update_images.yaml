@@ -16,7 +16,6 @@ jobs:
         image:
           - name: telegraf
           - name: backup
-          - name: preview-maker
           - name: tools
           - name: s3proxy
 
