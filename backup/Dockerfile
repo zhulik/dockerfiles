@@ -16,7 +16,7 @@ RUN apk add --no-cache alpine-sdk &&\
 
 FROM base
 
-RUN apk add --no-cache postgresql15-client restic
+RUN apk add --no-cache postgresql15-client restic aws-cli
 
 RUN wget https://dl.min.io/client/mc/release/linux-amd64/mc -qO /bin/mcli &&\
     chmod +x /bin/mcli
