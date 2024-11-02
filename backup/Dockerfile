@@ -3,7 +3,7 @@ FROM alpine:3.20 as base
 RUN mkdir /workdir
 WORKDIR /workdir
 
-RUN apk add --no-cache ruby ruby-dev &&\
+RUN apk add --no-cache ruby ruby-dev inotify-tools rclone &&\
     gem install bundler &&\
     bundle config set --local path './vendor'
 
